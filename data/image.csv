@@ -1,0 +1,4 @@
+//enum, filename, zbuffer
+BACKGROUND, image/eirin.jpg, 0
+CHARA1, image/eirin.jpg, 1
+CHARA2, image/youmu.jpg, 2
