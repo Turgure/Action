@@ -42,7 +42,12 @@ int Map::mapdata[2][15][20] = {
 };
 
 Map::Map(){
-	current = 0;
+	loadMap(current = 0);
+}
+
+void Map::loadMap(int id){
+	cells.clear();
+
 	for(int h = 0; h < 15; ++h){
 		for(int w = 0; w < 20; ++w){
 			auto obj = make_shared<Object>();
@@ -50,7 +55,7 @@ Map::Map(){
 			auto sprite = Sprite::create();
 
 			transform->set(32*w, 32*h);
-			if(mapdata[current][h][w] == 1){
+			if(mapdata[id][h][w] == 1){
 				sprite->set(GraphicManager::getInstance().getGraphic("data/image/chip1.jpg"));
 			} else {
 				sprite->set(GraphicManager::getInstance().getGraphic("data/image/chip2.jpg"));
@@ -64,6 +69,19 @@ Map::Map(){
 }
 
 void Map::update(Player& player){
+	updateMap();
+	updatePlayer(player);
+}
+
+void Map::updateMap(){
+	static int prev = current;
+	if(prev != current){
+		loadMap(current);
+		prev = current;
+	}
+}
+
+void Map::updatePlayer(Player& player){
 	if(player.getComponentAs<Transform>("Transform")->getX() < 0){
 		switch(current){
 		case 0:

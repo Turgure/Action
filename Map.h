@@ -8,7 +8,10 @@ class Player;
 class Map{
 public:
 	Map();
+	void loadMap(int id);
 	void update(Player& player);
+	void updateMap();
+	void updatePlayer(Player& player);
 private:
 	int current;
 	static int mapdata[2][15][20];
