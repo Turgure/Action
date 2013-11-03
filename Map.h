@@ -13,7 +13,7 @@ public:
 	void updateMap();
 	void updatePlayer(Player& player);
 private:
-	int current;
+	static int current;
 	static int mapdata[2][15][20];
 
 	std::vector<std::shared_ptr<Object>> cells;

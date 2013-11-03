@@ -5,6 +5,8 @@
 #include "Object.h"
 using namespace std;
 
+int Map::current = 0;
+
 int Map::mapdata[2][15][20] = {
 	{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -42,7 +44,7 @@ int Map::mapdata[2][15][20] = {
 };
 
 Map::Map(){
-	loadMap(current = 0);
+	loadMap(current);
 }
 
 void Map::loadMap(int id){
