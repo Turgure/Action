@@ -3,6 +3,7 @@
 #include "Graphic.h"
 #include "Transform.h"
 #include "Controller.h"
+#include "Collider.h"
 using namespace std;
 
 void SceneA::start(){
@@ -16,6 +17,8 @@ void SceneA::update(){
 
 	player.update();
 	map.update(player);
+
+	player.hit(objects[0]);
 }
 
 void SceneA::terminate(){
@@ -34,14 +37,18 @@ void SceneA::createPlayer(){
 
 void SceneA::createObject(int x, int y){
 	auto obj = make_shared<Object>();
+
 	auto transform = make_shared<Transform>();
-	auto sprite = Sprite::create();
-
 	transform->set(x, y);
-	sprite->set(GraphicManager::getInstance().getGraphic("data/image/youmu.jpg"), 2);
-
 	obj->addComponent(transform);
+	
+	auto sprite = Sprite::create();
+	sprite->set(GraphicManager::getInstance().getGraphic("data/image/youmu.jpg"), 2);
 	obj->addComponent(sprite);
+
+	auto collider = make_shared<Collider>();
+	collider->setRadius(16);
+	obj->addComponent(collider);
 
 	objects.push_back(obj);
 }
