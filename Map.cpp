@@ -21,7 +21,7 @@ int Map::mapdata[2][15][20] = {
 		{0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 		{0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 		{0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
-		{0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
+		{0, 1, 1, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
 		{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	}, {
@@ -37,7 +37,7 @@ int Map::mapdata[2][15][20] = {
 		{0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 		{0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 		{0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
-		{0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
+		{0, 1, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
 		{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	}
@@ -56,11 +56,18 @@ void Map::loadMap(int id){
 			auto transform = make_shared<Transform>();
 			auto sprite = Sprite::create();
 
-			transform->set(32*w, 32*h);
-			if(mapdata[id][h][w] == 1){
-				sprite->set(GraphicManager::getInstance().getGraphic("data/image/chip1.jpg"));
-			} else {
+			transform->set(32 * w, 32 * h);
+			switch(mapdata[id][h][w]){
+			case 0:
 				sprite->set(GraphicManager::getInstance().getGraphic("data/image/chip2.jpg"));
+				break;
+			case 1:
+				sprite->set(GraphicManager::getInstance().getGraphic("data/image/chip1.jpg"));
+				break;
+			case 2:
+				sprite->set(GraphicManager::getInstance().getGraphic("data/image/chip3.jpg"));
+				break;
+			default: break;
 			}
 
 			obj->addComponent(transform);
@@ -90,26 +97,26 @@ void Map::updatePlayer(Player& player){
 			player.getComponentAs<Transform>("Transform")->setX(0);
 			break;
 		case 1:
-			player.getComponentAs<Transform>("Transform")->setX(640-32);
+			player.getComponentAs<Transform>("Transform")->setX(640 - 32);
 			current = 0;
 			break;
 		}
 	}
-	if(player.getComponentAs<Transform>("Transform")->getX() > 640-32){
+	if(player.getComponentAs<Transform>("Transform")->getX() > 640 - 32){
 		switch(current){
 		case 0:
 			player.getComponentAs<Transform>("Transform")->setX(0);
 			current = 1;
 			break;
 		case 1:
-			player.getComponentAs<Transform>("Transform")->setX(640-32);
+			player.getComponentAs<Transform>("Transform")->setX(640 - 32);
 			break;
 		}
 	}
 	if(player.getComponentAs<Transform>("Transform")->getY() < 0){
-		player.getComponentAs<Transform>("Transform")->setY(480-32);
+		player.getComponentAs<Transform>("Transform")->setY(480 - 32);
 	}
-	if(player.getComponentAs<Transform>("Transform")->getY() > 480-32){
+	if(player.getComponentAs<Transform>("Transform")->getY() > 480 - 32){
 		player.getComponentAs<Transform>("Transform")->setY(0);
 	}
 }

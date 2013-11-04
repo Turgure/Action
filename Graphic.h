@@ -11,14 +11,19 @@ typedef int DxGraphicHandle;
 /*
  * Unique(—Bˆê)‚Ì‰æ‘œ‚ğŠÇ—‚·‚éƒNƒ‰ƒX
  */
+class GraphicManager;
 class Graphic{
 public:
-	Graphic(DxGraphicHandle handle);
-	Graphic();
+	Graphic(DxGraphicHandle handle, int width, int height):handle(handle), width(width), height(height){}
+	Graphic():handle(0), width(0), height(0){}
 	virtual ~Graphic();
 	DxGraphicHandle getHandle(){ return handle; }
+	int getWidth(){ return width; }
+	int getHeight(){ return height; }
 protected:
 	DxGraphicHandle handle;
+	int width;
+	int height;
 };
 
 /*
@@ -34,8 +39,8 @@ public:
 	std::shared_ptr<Graphic> getGraphic(const std::string& name){ return graphics[name]; }
 private:
 	GraphicManager();
-	void push(const std::string& path){
-		graphics[path] = std::make_shared<Graphic>(LoadGraph(path.c_str()));
+	void push(const std::string& path, int width, int height){
+		graphics[path] = std::make_shared<Graphic>(LoadGraph(path.c_str()), width, height);
 	}
 	std::unordered_map<std::string, std::shared_ptr<Graphic>> graphics;
 };
@@ -70,7 +75,7 @@ private:
 class Sprite : public Component{
 public:
 	virtual const std::string& getKeyString() const override {
-		static std::string key = "Graphic";
+		static std::string key = "Sprite";
 		return key;
 	}
 	void set(std::shared_ptr<Graphic> graph, int zIndex = -1){

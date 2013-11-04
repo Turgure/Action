@@ -11,7 +11,7 @@ private:
 	void terminate() override;
 
 	void createPlayer();
-	void createObjects();
+	void createObject(int x, int y);
 
 	std::vector<std::shared_ptr<Object>> objects;
 	Player player;

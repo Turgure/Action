@@ -5,22 +5,17 @@
 #include "Object.h"
 using namespace std;
 
-Graphic::Graphic(DxGraphicHandle handle):handle(handle){
-}
-
-Graphic::Graphic():handle(0){
-}
-
 Graphic::~Graphic(){
 	DeleteGraph(handle);
 }
 
 GraphicManager::GraphicManager(){
-	push("data/image/eirin.jpg");	//TODO: csvで管理。ファイル名、ハッシュの登録
-	push("data/image/youmu.jpg");
+	push("data/image/eirin.jpg", 32, 32);	//TODO: csvで管理。ファイル名、ハッシュの登録
+	push("data/image/youmu.jpg", 32, 32);
 
-	push("data/image/chip1.jpg");
-	push("data/image/chip2.jpg");
+	push("data/image/chip1.jpg", 32, 32);
+	push("data/image/chip2.jpg", 32, 32);
+	push("data/image/chip3.jpg", 32, 32);
 }
 
 void SpriteManager::update(){
@@ -36,7 +31,7 @@ void SpriteManager::draw(){
 		auto position = sprite.lock()->getObject()->getComponentAs<Transform>("Transform");
 		if(position){
 			DrawGraph((int)position->getX(), (int)position->getY(), sprite.lock()->getGraph()->getHandle(), true);
-			DrawFormatString((int)position->getX(), (int)position->getY()+10, GetColor(0,0,0), "%d", sprite.lock()->getZIndex()); 
+			DrawFormatString((int)position->getX(), (int)position->getY() + 10, GetColor(0, 0, 0), "%d", sprite.lock()->getZIndex());
 		}
 	}
 	DxLib::ScreenFlip();
