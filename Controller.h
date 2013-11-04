@@ -20,7 +20,7 @@ public:
 		return key;
 	}
 
-	Controller() :status(EMPTY){}
+	Controller():status(EMPTY){}
 	void update() override;
 
 private:
