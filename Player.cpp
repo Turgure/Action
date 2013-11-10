@@ -18,7 +18,7 @@ Player::Player(){
 	addComponent(input);
 	
 	auto collider = make_shared<Collider>();
-	collider->setRadius(getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2 * 0.8);
+	collider->set(getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2 * 0.8, collider->CIRCLE);
 	addComponent(collider);
 }
 
@@ -26,14 +26,11 @@ void Player::update(){
 	Object::update();
 }
 
-bool Player::hit(std::shared_ptr<Object> target){
-	auto i_col = getComponentAs<Collider>("Collider");
-	auto t_col = target->getComponentAs<Collider>("Collider");
-
-	if(pow(i_col->getCenter().getX() - t_col->getCenter().getX(), 2) + pow(i_col->getCenter().getY() - t_col->getCenter().getY(), 2)
-		<= pow(i_col->getRadius() + t_col->getRadius(), 2)){
+bool Player::hit(shared_ptr<Object> target){
+	if(getComponentAs<Collider>("Collider")->hit(getComponent("Collider")->getObject(), target.get())){
 		printfDx("hit");
 		return true;
 	}
+
 	return false;
 }

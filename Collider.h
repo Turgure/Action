@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <memory>
 #include "Component.h"
 #include "Vector2.h"
 
@@ -10,12 +11,29 @@ public:
 		return key;
 	}
 
+	enum Type{
+		CIRCLE,
+		LINE,
+		SQUARE,
+		TYPE_NUM
+	} type;
+
 	void update() override;
-	void setRadius(double radius){ this->radius = radius; }
+	void set(double radius, Type type){ this->radius = radius; this->type = type; }
 	double getRadius(){ return radius; }
 	Vector2 getCenter(){ return center; }
+	bool hit(Object* root, Object* target);
 
 private:
 	double radius;
 	Vector2 center;
+	Vector2 left_top;
+	Vector2 right_down;
+
+	bool hitCvC(Object* root, Object* target);
+	bool hitCvL(Object* root, Object* target);
+	bool hitCvS(Object* root, Object* target);
+	bool hitLvL(Object* root, Object* target);
+	bool hitLvS(Object* root, Object* target);
+	bool hitSvS(Object* root, Object* target);
 };
