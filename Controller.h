@@ -5,7 +5,6 @@
 class Controller : public Component{
 private:
 	enum Status{
-		EMPTY,
 		STOP,
 		WALK,
 		RUN,
@@ -20,10 +19,34 @@ public:
 		return key;
 	}
 
-	Controller():status(EMPTY){}
+	Controller():status(STOP){}
 	void update() override;
 
 private:
-	int frame = 0;
-	int jump_power = 10;
+	struct LR{
+		LR(){ reset(); }
+		void reset(){
+			spd = 0;
+		}
+
+		void accelerate(){
+			if(spd++ >= max) spd = max;
+		}
+
+		int spd;
+		const int max = 5;
+	} lr;
+
+	struct Jump{
+		Jump(){ reset();  }
+		void reset(){
+			frame = 0;
+			power = 20;
+		}
+
+		int frame;
+		double power;
+		const double max_fallspd = 15;
+		const double max_power = 25;
+	} jump;
 };
