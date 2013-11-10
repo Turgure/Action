@@ -47,7 +47,7 @@ void SceneA::createObject(int x, int y){
 	obj->addComponent(sprite);
 
 	auto collider = make_shared<Collider>();
-	collider->set(16, obj->getComponentAs<Collider>("Collider")->CIRCLE);
+	collider->set(obj->getComponentAs<Collider>("Collider")->CIRCLE, 16);
 	obj->addComponent(collider);
 
 	objects.push_back(obj);

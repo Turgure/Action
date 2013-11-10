@@ -18,7 +18,7 @@ Player::Player(){
 	addComponent(input);
 	
 	auto collider = make_shared<Collider>();
-	collider->set(getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2 * 0.8, collider->CIRCLE);
+	collider->set(collider->CIRCLE, getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2 * 0.8);
 	addComponent(collider);
 }
 

@@ -19,7 +19,7 @@ public:
 	} type;
 
 	void update() override;
-	void set(double radius, Type type){ this->radius = radius; this->type = type; }
+	void set(Type type, double radius = 0){ this->type = type; this->radius = radius; }
 	double getRadius(){ return radius; }
 	Vector2 getCenter(){ return center; }
 	bool hit(Object* root, Object* target);
