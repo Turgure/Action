@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include <memory>
-#include "Component.h"
+#include "Object.h"
+#include "Graphic.h"
 #include "Vector2.h"
 
 class Collider : public Component {
@@ -36,4 +37,29 @@ private:
 	bool hitLvL(Object* root, Object* target);
 	bool hitLvS(Object* root, Object* target);
 	bool hitSvS(Object* root, Object* target);
+
+	static std::shared_ptr<Collider> rc;
+	static std::shared_ptr<Collider> tc;
+	void initialize(Object* root, Object* target){
+		rc = root->getComponentAs<Collider>("Collider");
+		tc = target->getComponentAs<Collider>("Collider");
+	}
+
+	struct MyRectangule{
+		MyRectangule(Object* rect){
+			points.push_back( tc->center + Vector2(-rect->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, -rect->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2) );
+			points.push_back( tc->center + Vector2(rect->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, -rect->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2) );
+			points.push_back( tc->center + Vector2(-rect->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, rect->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2) );
+			points.push_back( tc->center + Vector2(rect->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, rect->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2) );
+		}
+
+		//p1 p2
+		//p3 p4
+		std::vector<Vector2> points;
+	};
+
+	//‰~‚Æ‹éŒ`‚Ì‚ ‚½‚è”»’è
+	bool isIncludingVertexInCircle(Object* circle, Object* rect);
+	bool isIncludingCircleInRecangle(Object* circle, Object* rect);
+	bool isLineOnCircle(Object* circle, Object* rect);
 };
