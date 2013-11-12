@@ -1,6 +1,5 @@
 #pragma once
 #include <cmath>
-#include "Component.h"
 
 class Vector2 {
 private:
@@ -104,8 +103,18 @@ public:
 		return atan2(y, x);
 	}
 
+	double angle(const Vector2& v) const{
+		return atan2(*this / v, *this * v);
+	}
+
+	double angle(const Vector2& o, const Vector2& v){
+		Vector2 d1 = *this - o;
+		Vector2 d2 = v - o;
+		return atan2(d1 / d2, d1 * d2);
+	}
+
 	//âÒì]
-	Vector2& rotate(int radian){
+	Vector2& rotate(double radian){
 		const double _sin = sin(radian);
 		const double _cos = cos(radian);
 		double newX = x * _cos - y * _sin;
@@ -114,10 +123,19 @@ public:
 		return *this;
 	}
 
-	static Vector2 rotate(const Vector2& v, int radian){
+	static Vector2 rotate(const Vector2& v, double radian){
 		const double _sin = sin(radian);
 		const double _cos = cos(radian);
 		return Vector2(v.x * _cos - v.y * _sin, v.x * _sin + v.y * _cos);
+	}
+
+	//ãóó£
+	double distance(const Vector2& v) const{
+		return sqrt((*this - v) * (*this - v));
+	}
+
+	static double distance(const Vector2& v1, const Vector2& v2){
+		return sqrt((v1 - v2) * (v1 - v2));
 	}
 
 	//ç¿ïW
