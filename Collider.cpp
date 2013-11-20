@@ -12,7 +12,7 @@ void Collider::update(){
 
 bool Collider::hit(Object* root, Object* target){
 	int r_type = root->getComponentAs<Collider>("Collider")->type;
-	int t_type = root->getComponentAs<Collider>("Collider")->type;
+	int t_type = target->getComponentAs<Collider>("Collider")->type;
 
 	switch(r_type){
 	case CIRCLE:
@@ -46,52 +46,58 @@ bool Collider::hit(Object* root, Object* target){
 }
 
 
-shared_ptr<Collider> Collider::rc;
-shared_ptr<Collider> Collider::tc;
 
 bool Collider::hitCvC(Object* root, Object* target){
-	initialize(root, target);
+	auto tc = target->getComponentAs<Collider>("Collider");
 
 	//(Ax-Bx)^2 + (Ay-By)^2 <= (Rx+Ry)^2
-	return pow(rc->getCenter().getX() - tc->getCenter().getX(), 2) + pow(rc->getCenter().getY() - tc->getCenter().getY(), 2) <= pow(rc->getRadius() + tc->getRadius(), 2);
+	return pow(getCenter().getX() - tc->getCenter().getX(), 2) + pow(getCenter().getY() - tc->getCenter().getY(), 2) <= pow(getRadius() + tc->getRadius(), 2);
 }
 
 bool Collider::hitCvL(Object* root, Object* target){//TODO:
-	initialize(root, target);
+	auto tc = target->getComponentAs<Collider>("Collider");
 
 	return true;
 }
 
 bool Collider::hitCvS(Object* root, Object* target){
-	initialize(root, target);
+	//return
+	//	isIncludingVertexInCircle(root, target) ||
+	//	isIncludingCircleInRecangle(root, target) ||
+	//	isLineOnCircle(root, target);
 
-	return
-		isIncludingVertexInCircle(root, target) ||
-		isIncludingCircleInRecangle(root, target) ||
-		isLineOnCircle(root, target);
+	bool flag = false;
+	if(isIncludingVertexInCircle(root, target)){
+		printfDx("hit : isIncludingVertexInCircle\n");
+		flag = true;
+	}
+	if(isIncludingCircleInRecangle(root, target)){
+		printfDx("hit : isIncludingCircleInRecangle\n");
+		flag = true;
+	}
+	if(isLineOnCircle(root, target)){
+		printfDx("hit : isLineOnCircle\n");
+		flag = true;
+	}
+
+	return flag;
 }
 
 bool Collider::hitLvL(Object* root, Object* target){//TODO:
-	initialize(root, target);
+	auto tc = target->getComponentAs<Collider>("Collider");
 
 	return true;
 }
 
 bool Collider::hitLvS(Object* root, Object* target){//TODO:
-	initialize(root, target);
+	auto tc = target->getComponentAs<Collider>("Collider");
 
 	return true;
 }
 
 bool Collider::hitSvS(Object* root, Object* target){
-	initialize(root, target);
 	MyRectangule r_rect(root);
 	MyRectangule t_rect(root);
-
-	rc->left_top = rc->center - Vector2(root->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, root->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2);
-	rc->right_down = rc->center + Vector2(root->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, root->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2);
-	tc->left_top = tc->center - Vector2(root->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, root->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2);
-	tc->right_down = tc->center + Vector2(root->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, root->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2);
 
 	//(a.left < b.right) && (a.right > b.left) && (a.top < b.bottom) && (a.bottom > b.top))
 	return (r_rect.points[0].getX() < t_rect.points[3].getX())
@@ -102,13 +108,12 @@ bool Collider::hitSvS(Object* root, Object* target){
 
 
 bool Collider::isIncludingVertexInCircle(Object* circle, Object* rect){
-	initialize(circle, rect);
 	MyRectangule myrect(rect);
 
 	Vector2 diff;
 	for(auto& point : myrect.points){
-		diff = rc->getCenter() - point;
-		if(diff * diff < rc->getRadius() * rc->getRadius()){
+		diff = getCenter() - point;
+		if(diff * diff < getRadius() * getRadius()){
 			return true;
 		}
 	}
@@ -117,26 +122,26 @@ bool Collider::isIncludingVertexInCircle(Object* circle, Object* rect){
 }
 
 bool Collider::isIncludingCircleInRecangle(Object* circle, Object* rect){
-	initialize(circle, rect);
 	MyRectangule myrect(rect);
 
-	//ü•ª‚Æ‰~‚Ì’†S‚ÌŠp“x‚ª0~PI/2‚ª‘Î‚Ìü•ª‚É‚¢‚¦‚é‚È‚ç‹éŒ`“à‚É‰~‚ª‘¶Ý
+	//ü•ª‚Æ‰~‚Ì’†S‚ÌŠp“x‚ª0~PI/2, ‚ª‘Î‚Ìü•ª‚É‚¢‚¦‚é‚È‚ç‹éŒ`“à‚É‰~‚ª‘¶Ý
 	return
-		0 <= myrect.points[1].angle(myrect.points[0], rc->getCenter()) && myrect.points[1].angle(myrect.points[0], rc->getCenter()) <= PI / 2 &&
-		0 <= myrect.points[2].angle(myrect.points[3], rc->getCenter()) && myrect.points[2].angle(myrect.points[3], rc->getCenter()) <= PI / 2;
+		0 <= myrect.points[1].angle(myrect.points[0], getCenter()) && myrect.points[1].angle(myrect.points[0], getCenter()) <= PI / 2 &&
+		0 <= myrect.points[2].angle(myrect.points[3], getCenter()) && myrect.points[2].angle(myrect.points[3], getCenter()) <= PI / 2;
 }
 
 bool Collider::isLineOnCircle(Object* circle, Object* rect){
-	initialize(circle, rect);
 	MyRectangule myrect(rect);
+
 	//ü•ªpq, ‰~‚Ì’†S‚ðm, m‚©‚çpq‚Ö‚Ì–@ü‚ðh‚Æ‚·‚é
 	//v(ph) = k * v(pq);
 	Vector2 pq, pm, ph, mh;
 	double k, distance2;
-	const int n[][4] = {{1, 4, 3, 0}, {0, 1, 4, 3}};
+
+	const int n[][4] = {{0, 1, 3, 2}, {1, 3, 2, 0}};
 	for(int i = 0; i < 4; ++i){
-		pq = myrect.points[n[0][i]] - myrect.points[n[1][i]];
-		pm = rc->getCenter() - myrect.points[n[0][i]];
+		pq = myrect.points[n[1][i]] - myrect.points[n[0][i]];
+		pm = getCenter() - myrect.points[n[0][i]];
 
 		k = (pq * pm) / (pq * pq);
 		//k > 1 || k < 0 ‚Ì‚Æ‚«‚ÍA‰~‚©‚ç‚Ì‚ü‚ªü•ªã‚É‚È‚¢
@@ -146,7 +151,7 @@ bool Collider::isLineOnCircle(Object* circle, Object* rect){
 		mh = ph - pm;
 
 		distance2 = mh * mh;
-		if(distance2 < rc->getRadius() * rc->getRadius()){
+		if(distance2 < getRadius() * getRadius()){
 			return true;
 		}
 	}

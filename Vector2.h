@@ -145,5 +145,6 @@ public:
 	double getY(){ return y; }
 
 	void set(double x, double y){ this->x = x; this->y = y; }
+	void set(const Vector2& v){ x = v.x; y = v.y; }
 	Vector2& get(){ return *this; }
 };

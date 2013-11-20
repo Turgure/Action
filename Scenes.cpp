@@ -19,6 +19,11 @@ void SceneA::update(){
 	map.update(player);
 
 	player.hit(objects[0]);
+	if(map.hit(&player)){
+		player.rollbackPosition();
+	}
+
+	printfDx("px: %f, py: %f\n", player.getComponentAs<Transform>("Transform")->getX(), player.getComponentAs<Transform>("Transform")->getY());
 }
 
 void SceneA::terminate(){

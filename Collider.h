@@ -3,6 +3,7 @@
 #include <memory>
 #include "Object.h"
 #include "Graphic.h"
+#include "Transform.h"
 #include "Vector2.h"
 
 class Collider : public Component {
@@ -28,8 +29,6 @@ public:
 private:
 	double radius;
 	Vector2 center;
-	Vector2 left_top;
-	Vector2 right_down;
 
 	bool hitCvC(Object* root, Object* target);
 	bool hitCvL(Object* root, Object* target);
@@ -38,23 +37,19 @@ private:
 	bool hitLvS(Object* root, Object* target);
 	bool hitSvS(Object* root, Object* target);
 
-	static std::shared_ptr<Collider> rc;
-	static std::shared_ptr<Collider> tc;
-	void initialize(Object* root, Object* target){
-		rc = root->getComponentAs<Collider>("Collider");
-		tc = target->getComponentAs<Collider>("Collider");
-	}
-
 	struct MyRectangule{
 		MyRectangule(Object* rect){
-			points.push_back( tc->center + Vector2(-rect->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, -rect->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2) );
-			points.push_back( tc->center + Vector2(rect->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, -rect->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2) );
-			points.push_back( tc->center + Vector2(-rect->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, rect->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2) );
-			points.push_back( tc->center + Vector2(rect->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2, rect->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight() / 2) );
+			auto pos = rect->getComponentAs<Transform>("Transform");
+			auto graph = rect->getComponentAs<Sprite>("Sprite")->getGraph();
+
+			points.push_back( pos->get() + Vector2(-graph->getWidth() / 2, -graph->getHeight() / 2) );
+			points.push_back( pos->get() + Vector2(graph->getWidth() / 2, -graph->getHeight() / 2) );
+			points.push_back( pos->get() + Vector2(-graph->getWidth() / 2, graph->getHeight() / 2) );
+			points.push_back( pos->get() + Vector2(graph->getWidth() / 2, graph->getHeight() / 2) );
 		}
 
-		//p1 p2
-		//p3 p4
+		//p0 p1
+		//p2 p3
 		std::vector<Vector2> points;
 	};
 

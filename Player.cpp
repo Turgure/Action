@@ -23,12 +23,18 @@ Player::Player(){
 }
 
 void Player::update(){
+	prev = *getComponentAs<Transform>("Transform");
+
 	Object::update();
+}
+
+void Player::rollbackPosition(){
+	getComponentAs<Transform>("Transform")->set(prev);
 }
 
 bool Player::hit(shared_ptr<Object> target){
 	if(getComponentAs<Collider>("Collider")->hit(getComponent("Collider")->getObject(), target.get())){
-		printfDx("hit");
+		printfDx("hit\n");
 		return true;
 	}
 
