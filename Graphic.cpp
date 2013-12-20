@@ -13,6 +13,9 @@ GraphicManager::GraphicManager(){
 	push("data/image/eirin.jpg", 32, 32);	//TODO: csvで管理。ファイル名、ハッシュの登録
 	push("data/image/youmu.jpg", 32, 32);
 
+	push("data/image/bg1.png", 640, 480);
+	push("data/image/bg2.png", 640, 480);
+
 	push("data/image/chip1.jpg", 32, 32);
 	push("data/image/chip2.jpg", 32, 32);
 	push("data/image/chip3.jpg", 32, 32);
