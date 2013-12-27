@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#include "Vector2.h"
 #include "Component.h"
+
 
 class Controller : public Component{
 private:
@@ -21,6 +23,8 @@ public:
 
 	Controller():status(STOP){}
 	void update() override;
+	void setMomentum(Vector2 v){ momentum = v; }
+	Vector2 getMomentum(){ return momentum;  }
 
 private:
 	struct LR{
@@ -49,4 +53,6 @@ private:
 		const double max_fallspd = 15;
 		const double max_power = 25;
 	} jump;
+
+	Vector2 momentum;
 };

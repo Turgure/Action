@@ -7,29 +7,40 @@
 void Controller::update(){
 	auto& position = getObject()->getComponentAs<Transform>("Transform");
 
-	//move horizontal
-	if(Input::getInstance().pushed(KEY_INPUT_LEFT, false) || Input::getInstance().pushed(KEY_INPUT_RIGHT, false)){
-		lr.reset();
-	}
+	/*
+	* move horizontal
+	*/
+	//accelerator
 	if(Input::getInstance().pushing(KEY_INPUT_RIGHT)){
-		lr.accelerate();
-		*position += Vector2(lr.spd, 0);
+		momentum += Vector2(2, 0);
 	}
 	if(Input::getInstance().pushing(KEY_INPUT_LEFT)){
-		lr.accelerate();
-		*position += Vector2(-lr.spd, 0);
+		momentum += Vector2(-2, 0);
 	}
+	//brake
+	if(momentum.getX() != 0){//TODO: –€ŽC‚ðl—¶i‹ó’†‚ÍŒ¸‘¬‚µ‚È‚¢j
+		if(momentum.getX() > 0) momentum -= Vector2( 1, 0);
+		if(momentum.getX() < 0) momentum -= Vector2(-1, 0);
+	}
+	//adjust to max_speed
+	momentum.setX(momentum.getX() >=  8 ?  8 : momentum.getX());
+	momentum.setX(momentum.getX() <= -8 ? -8 : momentum.getX());
 
 
+	/* 
+	 * move vertical
+	 */
 	//jumping
 	if(Input::getInstance().pushed(KEY_INPUT_SPACE, false) && status != FALL){
 		status = JUMP;
 	}
 	if(Input::getInstance().pushing(KEY_INPUT_SPACE) && status == JUMP){
-		jump.power += 0.5;
-		jump.power >= jump.max_power ? jump.max_power : jump.power;
+		momentum -= Vector2(0, 2);
+		//jump.power += 0.5;
+		//jump.power >= jump.max_power ? jump.max_power : jump.power;
 	}
 
+	/*
 	if(status == JUMP){
 		if(++jump.frame < jump.power){
 			double v = jump.power * 1.0 / jump.frame + 0.5 < 15 ? jump.power * 1.0 / jump.frame : 15;
@@ -53,4 +64,16 @@ void Controller::update(){
 			status = STOP;
 		}
 	}
+	*/
+
+	//brake
+	if(momentum.getY() != 0){
+		momentum += Vector2(0, 0.98);
+	}
+	//adjust to max_speed
+	if(momentum.getY() > 24/*chip size * 3/4*/){
+		momentum.setY(24);
+	}
+
+	*position += momentum;
 }

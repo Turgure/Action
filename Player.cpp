@@ -14,8 +14,8 @@ Player::Player(){
 	sprite->set(GraphicManager::getInstance().getGraphic("data/image/youmu.jpg"), 3);
 	addComponent(sprite);
 
-	auto input = make_shared<Controller>();
-	addComponent(input);
+	auto controller = make_shared<Controller>();
+	addComponent(controller);
 	
 	auto collider = make_shared<Collider>();
 	collider->set(collider->CIRCLE, getComponentAs<Sprite>("Sprite")->getGraph()->getWidth() / 2 * 0.8);
@@ -23,13 +23,8 @@ Player::Player(){
 }
 
 void Player::update(){
-	prev = *getComponentAs<Transform>("Transform");
 
 	Object::update();
-}
-
-void Player::rollbackPosition(){
-	getComponentAs<Transform>("Transform")->set(prev);
 }
 
 bool Player::hit(shared_ptr<Object> target){

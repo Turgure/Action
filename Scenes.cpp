@@ -19,9 +19,6 @@ void SceneA::update(){
 	map.update(player);
 
 	player.hit(objects[0]);
-	if(map.hit(&player)){
-		player.rollbackPosition();
-	}
 
 	printfDx("px: %f, py: %f\n", player.getComponentAs<Transform>("Transform")->getX(), player.getComponentAs<Transform>("Transform")->getY());
 }
@@ -32,12 +29,12 @@ void SceneA::terminate(){
 void SceneA::createPlayer(){
 	auto transform = make_shared<Transform>();
 	auto sprite = Sprite::create();
-	auto input = make_shared<Controller>();
+	auto controller = make_shared<Controller>();
 	transform->set(0, 100);
 	sprite->set(GraphicManager::getInstance().getGraphic("data/image/youmu.jpg"), 3);
 	player.addComponent(transform);
 	player.addComponent(sprite);
-	player.addComponent(input);
+	player.addComponent(controller);
 }
 
 void SceneA::createObject(int x, int y){
