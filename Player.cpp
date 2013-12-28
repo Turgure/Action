@@ -23,7 +23,6 @@ Player::Player(){
 }
 
 void Player::update(){
-
 	Object::update();
 }
 
