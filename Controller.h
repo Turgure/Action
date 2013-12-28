@@ -17,7 +17,7 @@ private:
 
 public:
 	virtual const std::string& getKeyString() const override {
-		static std::string key = "Gamepad";
+		static std::string key = "Controller";
 		return key;
 	}
 
@@ -25,6 +25,7 @@ public:
 	void update() override;
 	void setMomentum(Vector2 v){ momentum = v; }
 	Vector2 getMomentum(){ return momentum;  }
+	void resetYMomentum(){ momentum.setY(0); }
 
 private:
 	struct LR{

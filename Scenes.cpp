@@ -20,6 +20,8 @@ void SceneA::update(){
 
 	player.hit(objects[0]);
 
+	map.hit(player.getComponentAs<Collider>("Collider")->getObject());
+
 	printfDx("px: %f, py: %f\n", player.getComponentAs<Transform>("Transform")->getX(), player.getComponentAs<Transform>("Transform")->getY());
 }
 
