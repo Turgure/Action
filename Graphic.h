@@ -27,8 +27,8 @@ protected:
 };
 
 /*
- * グラフィック管理クラス
- * グラフィック一覧を配列で管理
+ * Graphic管理クラス
+ * Graphic一覧を配列で管理
  */
 class GraphicManager{
 public:

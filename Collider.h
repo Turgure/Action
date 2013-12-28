@@ -21,14 +21,21 @@ public:
 	} type;
 
 	void update() override;
-	void set(Type type, double radius = 0){ this->type = type; this->radius = radius; }
+	void set(Type type);
+	void set(Type type, double radius);
+	void set(Type type, double lrRate, double udRate);	///O <= rate <= 1;
 	double getRadius(){ return radius; }
 	Vector2 getCenter(){ return center; }
+	double getLrRate(){ return lrRate; }
+	double getUdRate(){ return udRate; }
 	bool hit(Object* root, Object* target);
 
 private:
 	double radius;
 	Vector2 center;
+	double lrRate, udRate;
+
+	std::vector<Vector2> getHitPos(Object* obj);
 
 	bool hitCvC(Object* root, Object* target);
 	bool hitCvL(Object* root, Object* target);
@@ -36,22 +43,6 @@ private:
 	bool hitLvL(Object* root, Object* target);
 	bool hitLvS(Object* root, Object* target);
 	bool hitSvS(Object* root, Object* target);
-
-	struct MyRectangule{
-		MyRectangule(Object* rect){
-			auto pos = rect->getComponentAs<Transform>("Transform");
-			auto graph = rect->getComponentAs<Sprite>("Sprite")->getGraph();
-
-			points.push_back( pos->get() + Vector2(-graph->getWidth() / 2, -graph->getHeight() / 2) );
-			points.push_back( pos->get() + Vector2(graph->getWidth() / 2, -graph->getHeight() / 2) );
-			points.push_back( pos->get() + Vector2(-graph->getWidth() / 2, graph->getHeight() / 2) );
-			points.push_back( pos->get() + Vector2(graph->getWidth() / 2, graph->getHeight() / 2) );
-		}
-
-		//p0 p1
-		//p2 p3
-		std::vector<Vector2> points;
-	};
 
 	//‰~‚Æ‹éŒ`‚Ì‚ ‚½‚è”»’è
 	bool isIncludingVertexInCircle(Object* circle, Object* rect);

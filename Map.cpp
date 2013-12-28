@@ -87,10 +87,11 @@ void Map::loadMap(int id){
 			auto obj = make_shared<Object>();
 
 			auto transform = make_shared<Transform>();
-			transform->set(32 * w, 32 * h);
 			obj->addComponent(transform);
+			transform->set(32 * w, 32 * h);
 
 			auto sprite = Sprite::create();
+			obj->addComponent(sprite);
 			switch(mapdata[id][h][w]){
 			case 0:
 				//sprite->set(nullptr);
@@ -102,11 +103,10 @@ void Map::loadMap(int id){
 			case 2:
 			default: break;
 			}
-			obj->addComponent(sprite);
 
 			auto collider = make_shared<Collider>();
-			collider->set(Collider::SQUARE);
 			obj->addComponent(collider);
+			collider->set(Collider::SQUARE, 1, 1);
 
 			cells[h][w].id = mapdata[id][h][w];
 			cells[h][w].obj = obj;

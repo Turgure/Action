@@ -10,6 +10,20 @@ void Collider::update(){
 	center = getObject()->getComponentAs<Transform>("Transform")->get() + Vector2(graph->getWidth() / 2, graph->getHeight() / 2);
 }
 
+void Collider::set(Type type){
+	this->type = type;
+}
+
+void Collider::set(Type type, double radius){
+	this->type = type; this->radius = radius;
+}
+
+void Collider::set(Type type, double lrRate, double udRate){
+	this->type = type;
+	this->lrRate = lrRate;
+	this->udRate = udRate;
+}
+
 bool Collider::hit(Object* root, Object* target){
 	int r_type = root->getComponentAs<Collider>("Collider")->type;
 	int t_type = target->getComponentAs<Collider>("Collider")->type;
@@ -45,7 +59,20 @@ bool Collider::hit(Object* root, Object* target){
 	return false;
 }
 
+vector<Vector2> Collider::getHitPos(Object* obj){
+	vector<Vector2> hitPos;
+	auto collider = obj->getComponentAs<Collider>("Collider");
+	const int width = obj->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth();
+	const int height = obj->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight();
 
+	//TODO: リファクタリング
+	hitPos.push_back(Vector2(collider->getCenter().getX() - width / 2 * collider->getLrRate(), collider->getCenter().getY() - height / 2 * collider->getUdRate()));
+	hitPos.push_back(Vector2(collider->getCenter().getX() + width / 2 * collider->getLrRate(), collider->getCenter().getY() - height / 2 * collider->getUdRate()));
+	hitPos.push_back(Vector2(collider->getCenter().getX() - width / 2 * collider->getLrRate(), collider->getCenter().getY() + height / 2 * collider->getUdRate()));
+	hitPos.push_back(Vector2(collider->getCenter().getX() + width / 2 * collider->getLrRate(), collider->getCenter().getY() + height / 2 * collider->getUdRate()));
+
+	return hitPos;
+}
 
 bool Collider::hitCvC(Object* root, Object* target){
 	auto tc = target->getComponentAs<Collider>("Collider");
@@ -54,9 +81,8 @@ bool Collider::hitCvC(Object* root, Object* target){
 	return pow(getCenter().getX() - tc->getCenter().getX(), 2) + pow(getCenter().getY() - tc->getCenter().getY(), 2) <= pow(getRadius() + tc->getRadius(), 2);
 }
 
-bool Collider::hitCvL(Object* root, Object* target){//TODO:
-	auto tc = target->getComponentAs<Collider>("Collider");
-
+bool Collider::hitCvL(Object* root, Object* target){
+	//TODO:
 	return true;
 }
 
@@ -83,35 +109,33 @@ bool Collider::hitCvS(Object* root, Object* target){
 	return flag;
 }
 
-bool Collider::hitLvL(Object* root, Object* target){//TODO:
-	auto tc = target->getComponentAs<Collider>("Collider");
-
+bool Collider::hitLvL(Object* root, Object* target){
+	//TODO:
 	return true;
 }
 
-bool Collider::hitLvS(Object* root, Object* target){//TODO:
-	auto tc = target->getComponentAs<Collider>("Collider");
-
+bool Collider::hitLvS(Object* root, Object* target){
+	//TODO:
 	return true;
 }
 
 bool Collider::hitSvS(Object* root, Object* target){
-	MyRectangule r_rect(root);
-	MyRectangule t_rect(root);
+	auto r_hitPos = getHitPos(root);
+	auto t_hitPos = getHitPos(target);
 
 	//(a.left < b.right) && (a.right > b.left) && (a.top < b.bottom) && (a.bottom > b.top))
-	return (r_rect.points[0].getX() < t_rect.points[3].getX())
-		&& (r_rect.points[0].getY() < t_rect.points[3].getY())
-		&& (r_rect.points[3].getX() > t_rect.points[0].getX())
-		&& (r_rect.points[3].getY() > t_rect.points[0].getY());
+	return (r_hitPos[0].getX() < t_hitPos[3].getX())
+		&& (r_hitPos[0].getY() < t_hitPos[3].getY())
+		&& (r_hitPos[3].getX() > t_hitPos[0].getX())
+		&& (r_hitPos[3].getY() > t_hitPos[0].getY());
 }
 
 
 bool Collider::isIncludingVertexInCircle(Object* circle, Object* rect){
-	MyRectangule myrect(rect);
+	auto hitPos = getHitPos(rect);
 
 	Vector2 diff;
-	for(auto& point : myrect.points){
+	for(auto& point : hitPos){
 		diff = getCenter() - point;
 		if(diff * diff < getRadius() * getRadius()){
 			return true;
@@ -122,16 +146,16 @@ bool Collider::isIncludingVertexInCircle(Object* circle, Object* rect){
 }
 
 bool Collider::isIncludingCircleInRecangle(Object* circle, Object* rect){
-	MyRectangule myrect(rect);
+	auto hitPos = getHitPos(rect);
 
 	//線分と円の中心の角度が0~PI/2, が対の線分にいえるなら矩形内に円が存在
 	return
-		0 <= myrect.points[1].angle(myrect.points[0], getCenter()) && myrect.points[1].angle(myrect.points[0], getCenter()) <= PI / 2 &&
-		0 <= myrect.points[2].angle(myrect.points[3], getCenter()) && myrect.points[2].angle(myrect.points[3], getCenter()) <= PI / 2;
+		0 <= hitPos[1].angle(hitPos[0], getCenter()) && hitPos[1].angle(hitPos[0], getCenter()) <= PI / 2 &&
+		0 <= hitPos[2].angle(hitPos[3], getCenter()) && hitPos[2].angle(hitPos[3], getCenter()) <= PI / 2;
 }
 
 bool Collider::isLineOnCircle(Object* circle, Object* rect){
-	MyRectangule myrect(rect);
+	auto hitPos = getHitPos(rect);
 
 	//線分pq, 円の中心をm, mからpqへの法線をhとする
 	//v(ph) = k * v(pq);
@@ -140,8 +164,8 @@ bool Collider::isLineOnCircle(Object* circle, Object* rect){
 
 	const int n[][4] = {{0, 1, 3, 2}, {1, 3, 2, 0}};
 	for(int i = 0; i < 4; ++i){
-		pq = myrect.points[n[1][i]] - myrect.points[n[0][i]];
-		pm = getCenter() - myrect.points[n[0][i]];
+		pq = hitPos[n[1][i]] - hitPos[n[0][i]];
+		pm = getCenter() - hitPos[n[0][i]];
 
 		k = (pq * pm) / (pq * pq);
 		//k > 1 || k < 0 のときは、円からの垂線が線分上にない
