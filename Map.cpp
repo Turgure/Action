@@ -19,11 +19,11 @@ int Map::mapdata[2][15][20] = {
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0},
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 	}, {
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -101,7 +101,9 @@ void Map::loadMap(int id){
 				cells[h][w].isMovable = false;
 				break;
 			case 2:
-			default: break;
+			default:
+				cells[h][w].obj = nullptr;
+				break;
 			}
 
 			auto collider = make_shared<Collider>();
@@ -120,6 +122,14 @@ void Map::update(Player& player){
 }
 
 void Map::updateMap(){
+	for(int h = 0; h < 15; ++h){
+		for(int w = 0; w < 20; ++w){
+			if(cells[h][w].obj){
+				cells[h][w].obj->getComponent("Collider")->update();
+			}
+		}
+	}
+
 	static int prev = current;
 	if(prev != current){
 		loadBackground(current);
@@ -184,13 +194,33 @@ bool Map::hit(Object* obj){//TODO: Scenes.cppで実装
 	//	printfDx("x:%0f, y:%0f\n", point.obj->getComponentAs<Transform>("Transform")->getX(), point.obj->getComponentAs<Transform>("Transform")->getY());
 	//}
 
-	for(auto& point : dismovable_points){//TODO: 4方向実装する？
+	for(auto& point : dismovable_points){//TODO: ベクトル処理 or improvement
 		if(collider->hit(obj, point.obj.get())){
 			printfDx("マップのマスと衝突\n");
 			auto playerPos = obj->getComponentAs<Transform>("Transform");
 			auto diff = point.obj->getComponentAs<Transform>("Transform")->get() - *playerPos;
-			*playerPos -= diff;
 			obj->getComponentAs<Controller>("Controller")->resetYMomentum();
+
+			//horizontal
+			if(abs(diff.getY()) < 16){
+				if(-16 < diff.getX() && diff.getX() < 32){//hit left
+					playerPos->setX(playerPos->getX() - (32 - diff.getX()));
+				}
+				else if(-32 < diff.getX() && diff.getX() < -16){//hit right
+					playerPos->setX(playerPos->getX() + (32 + diff.getX()));
+				}
+			}
+
+			//vertical
+			if(abs(diff.getX()) < 16){
+				if(-16 < diff.getY() && diff.getY() < 32){//hit top
+					playerPos->setY(playerPos->getY() - (32 - diff.getY()));
+				}
+				else if(-32 < diff.getY() && diff.getY() < -16){//hit bottom
+					playerPos->setY(playerPos->getY() + (32 + diff.getY()));
+				}
+			}
+
 			return true;
 		}
 	}

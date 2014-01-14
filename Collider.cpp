@@ -61,15 +61,17 @@ bool Collider::hit(Object* root, Object* target){
 
 vector<Vector2> Collider::getHitPos(Object* obj){
 	vector<Vector2> hitPos;
-	auto collider = obj->getComponentAs<Collider>("Collider");
+	const enum {X, Y, LR = 0, UD};
+	const auto collider = obj->getComponentAs<Collider>("Collider");
+	const vector<double> center = {collider->getCenter().getX(), collider->getCenter().getY()};
+	const vector<double> rate = {collider->getLrRate(), collider->getUdRate()};
 	const int width = obj->getComponentAs<Sprite>("Sprite")->getGraph()->getWidth();
 	const int height = obj->getComponentAs<Sprite>("Sprite")->getGraph()->getHeight();
 
-	//TODO: リファクタリング
-	hitPos.push_back(Vector2(collider->getCenter().getX() - width / 2 * collider->getLrRate(), collider->getCenter().getY() - height / 2 * collider->getUdRate()));
-	hitPos.push_back(Vector2(collider->getCenter().getX() + width / 2 * collider->getLrRate(), collider->getCenter().getY() - height / 2 * collider->getUdRate()));
-	hitPos.push_back(Vector2(collider->getCenter().getX() - width / 2 * collider->getLrRate(), collider->getCenter().getY() + height / 2 * collider->getUdRate()));
-	hitPos.push_back(Vector2(collider->getCenter().getX() + width / 2 * collider->getLrRate(), collider->getCenter().getY() + height / 2 * collider->getUdRate()));
+	hitPos.push_back(Vector2(center[X] - width / 2 * rate[LR], center[Y] - height / 2 * rate[UD]));
+	hitPos.push_back(Vector2(center[X] + width / 2 * rate[LR], center[Y] - height / 2 * rate[UD]));
+	hitPos.push_back(Vector2(center[X] - width / 2 * rate[LR], center[Y] + height / 2 * rate[UD]));
+	hitPos.push_back(Vector2(center[X] + width / 2 * rate[LR], center[Y] + height / 2 * rate[UD]));
 
 	return hitPos;
 }

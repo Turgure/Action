@@ -36,6 +36,7 @@ void Controller::update(){
 	}
 	if(Input::getInstance().pushing(KEY_INPUT_SPACE) && status == JUMP){
 		momentum -= Vector2(0, 2);
+
 		//jump.power += 0.5;
 		//jump.power >= jump.max_power ? jump.max_power : jump.power;
 	}
@@ -66,10 +67,9 @@ void Controller::update(){
 	}
 	*/
 
-	//brake
-	if(momentum.getY() != 0){
-		momentum += Vector2(0, 0.98);
-	}
+	//gravity
+	momentum += Vector2(0, 0.98);
+
 	//adjust to max_speed
 	if(momentum.getY() > 24/*chip size * 3/4*/){
 		momentum.setY(24);
